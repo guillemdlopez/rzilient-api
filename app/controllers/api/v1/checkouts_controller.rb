@@ -1,6 +1,11 @@
 class Api::V1::CheckoutsController < ApplicationController
   def checkout
     codes = params[:ids]
+    
+    if !codes.present? || codes.empty?
+      render json: { message: "Something went wrong... Please try it again", status: :unprocessable_entity }
+    end
+
     if codes.present?
       laptops = Laptop.find_laptops(params[:ids])
 
@@ -18,7 +23,7 @@ class Api::V1::CheckoutsController < ApplicationController
       render json: {
         message: 'This is your bill. Come back soon!',
         cart: laptops,
-        total_price: "The total amount to pay is #{total_price}€" 
+        total_price: "The total amount to pay is #{total_price.ceil}€" 
       }
     end
   end
