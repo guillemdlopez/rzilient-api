@@ -23,7 +23,8 @@ class Api::V1::CheckoutsController < ApplicationController
       render json: {
         message: 'This is your bill. Come back soon!',
         cart: laptops,
-        total_price: "The total amount to pay is #{total_price.ceil}€" 
+        total_price: "The total amount to pay is #{total_price.ceil}€",
+        status: :success 
       }
     end
   end
