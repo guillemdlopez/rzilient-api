@@ -29,8 +29,9 @@ RSpec.describe Api::V1::CheckoutsController do
     
         it 'should display an error message when the array of ids is empty' do
             post '/api/v1/checkouts', params: { ids: [] }, headers: @headers
-
             json_response = JSON.parse(response.body)
+
+            expect(json_response["message"]).to eq('Your cart is empty!')
         end
     end
 end
