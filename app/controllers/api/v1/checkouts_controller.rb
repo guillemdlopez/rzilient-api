@@ -9,11 +9,9 @@ class Api::V1::CheckoutsController < ApplicationController
       
       # calculate payment methods
       if at_least_two_lenovos?(codes)
-        total_price = buy_one_get_one_free(codes, price)
+        price -= buy_one_get_one_free(codes, price)
       elsif two_or_more_macbooks?(codes)
-        total_price = macbook_discount(codes, price)
-      else
-        total_price = price
+        price -= macbook_discount(codes, price)
       end
 
       if laptops.empty?
@@ -22,7 +20,7 @@ class Api::V1::CheckoutsController < ApplicationController
         render json: {
           message: 'This is your bill. Come back soon!',
           cart: laptops,
-          total_price: "The total amount to pay is #{total_price.ceil}€",
+          total_price: "The total amount to pay is #{price.ceil}€",
           status: :success 
         }
       end
@@ -43,13 +41,13 @@ class Api::V1::CheckoutsController < ApplicationController
 
   def macbook_discount(codes, price)
     macs = codes.select {|lap| lap == "AP1"}
-    price - ((macs.length * 60) * 10) / 100  
+    ((macs.length * 60) * 10) / 100  
   end
 
   def buy_one_get_one_free(codes, price)
-      lns = codes.select {|lap| lap == "LN1"}
+    lns = codes.select {|lap| lap == "LN1"}
 
-      price - (lns.length.to_f / 2).floor * 41
+    (lns.length.to_f / 2).floor * 41
   end
 
   def basic_price(laptops)
