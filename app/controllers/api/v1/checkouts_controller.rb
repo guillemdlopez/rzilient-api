@@ -12,7 +12,6 @@ class Api::V1::CheckoutsController < ApplicationController
         total_price = buy_one_get_one_free(codes, price)
       elsif two_or_more_macbooks?(codes)
         total_price = macbook_discount(codes, price)
-        byebug
       else
         total_price = price
       end
