@@ -8,7 +8,7 @@ class Api::V1::CheckoutsController < ApplicationController
       price = basic_price(laptops)
       
       # calculate payment methods
-      if two_lenovos?(codes)
+      if at_least_two_lenovos?(codes)
         total_price = buy_one_get_one_free(codes, price)
       elsif two_or_more_macbooks?(codes)
         total_price = macbook_discount(codes, price)
@@ -33,7 +33,7 @@ class Api::V1::CheckoutsController < ApplicationController
 
   private
 
-  def two_lenovos?(codes)
+  def at_least_two_lenovos?(codes)
     codes.count('LN1') >= 2
   end
 
@@ -49,7 +49,7 @@ class Api::V1::CheckoutsController < ApplicationController
   def buy_one_get_one_free(codes, price)
       lns = codes.select {|lap| lap == "LN1"}
 
-      (lns.length.to_f / 2).floor * 41
+      price - (lns.length.to_f / 2).floor * 41
   end
 
   def basic_price(laptops)
