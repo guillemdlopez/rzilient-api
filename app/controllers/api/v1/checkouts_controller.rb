@@ -1,4 +1,4 @@
-class Api::V1::CheckoutsController < ApplicationController  
+class Api::V1::CheckoutsController < ApplicationController
   def checkout
     codes = params[:ids]
 
@@ -10,8 +10,10 @@ class Api::V1::CheckoutsController < ApplicationController
       else
         price = basic_price(laptops)
       
-        # calculate payment methods
-        if at_least_two_lenovos?(codes)
+        if at_least_two_lenovos?(codes) && two_or_more_macbooks?(codes)
+          price -= macbook_discount(laptops, price)
+          price -= buy_one_get_one_free(laptops, price)
+        elsif at_least_two_lenovos?(codes)
           price -= buy_one_get_one_free(laptops, price)
         elsif two_or_more_macbooks?(codes)
           price -= macbook_discount(laptops, price)
