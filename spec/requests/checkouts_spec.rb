@@ -103,6 +103,13 @@ RSpec.describe Api::V1::CheckoutsController, type: :request do
 
                 expect(json_response["total_price"]).to eq("The total amount to pay is 149€")
             end
+
+            it "should apply a 10% discount on 2 or more Macbook Pro 13 and give away one free Lenovo Thinkpad" do
+                post api_v1_checkouts_path, params: { ids: ["AP1", "AP1", "LN1", "LN1", "HP1"] }, headers: @headers
+                json_response = JSON.parse(response.body)
+
+                expect(json_response["total_price"]).to eq("The total amount to pay is 188€")
+            end
         end
 
         describe 'Alert messages' do
