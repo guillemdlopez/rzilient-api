@@ -36,7 +36,7 @@ RSpec.describe Api::V1::CheckoutsController, type: :request do
             expect(json_response["total_price"]).to eq("The total amount to pay is 179€")
         end
 
-        describe 'Buy one get one free discount' do
+        describe 'Buy one get one free discount on 2 or more Lenovo Thinkpad' do
             it "should apply a 'Buy one get one free discount' if the users buys 2 Lenovos" do
                 post api_v1_checkouts_path, params: { ids: ["LN1", "LN1"] }, headers: @headers
                 json_response = JSON.parse(response.body)
@@ -66,7 +66,7 @@ RSpec.describe Api::V1::CheckoutsController, type: :request do
             end
         end
 
-        describe '10% discount on 2 or more Lenovo Thinkpads' do
+        describe '10% discount on 2 or more Macbook Pro 13' do
             it "should apply the 10% discount on 2 Macbooks" do
                 post api_v1_checkouts_path, params: { ids: ["AP1", "AP1"] }, headers: @headers
                 json_response = JSON.parse(response.body)
@@ -94,6 +94,15 @@ RSpec.describe Api::V1::CheckoutsController, type: :request do
     
                 expect(json_response["total_price"]).to eq("The total amount to pay is 188€")
             end 
+        end
+
+        describe "Both discounts on one cart" do
+            it "should apply a 10% discount on 2 or more Macbook Pro 13 and give away one free Lenovo Thinkpad" do
+                post api_v1_checkouts_path, params: { ids: ["AP1", "AP1", "LN1", "LN1"] }, headers: @headers
+                json_response = JSON.parse(response.body)
+
+                expect(json_response["total_price"]).to eq("The total amount to pay is 149€")
+            end
         end
 
         describe 'Alert messages' do
