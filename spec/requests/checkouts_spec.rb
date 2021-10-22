@@ -1,5 +1,4 @@
 require 'rails_helper'
-require 'database_cleaner/active_record'
 
 RSpec.describe Api::V1::CheckoutsController, type: :request do
     describe 'POST #checkout', type: :request do
