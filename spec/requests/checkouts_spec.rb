@@ -1,13 +1,15 @@
 require 'rails_helper'
+require 'database_cleaner/active_record'
 
 RSpec.describe Api::V1::CheckoutsController, type: :request do
     describe 'POST #checkout', type: :request do
         before(:context) do
+            Laptop.destroy_all
             @headers = { content_type: "application/json" }
             laptop_codes = ["AP1", "LN1", "HP1"]
             laptop_names = ["Macbook Pro 13", "Lenovo Thinkpad", "HP 850 G5"]
             laptop_prices = [60, 41, 39]
-
+    
             laptop_codes.each_with_index do |code, ind|
                 Laptop.create!(code: code, name: laptop_names[ind], price: laptop_prices[ind])
             end
@@ -50,10 +52,10 @@ RSpec.describe Api::V1::CheckoutsController, type: :request do
         end
 
         it 'should display an error message when the array of ids is empty' do
-            post api_v1_checkouts_path, params: { ids: [""] }, headers: @headers
+            post api_v1_checkouts_path, params: { ids: [] }, headers: @headers
             json_response = JSON.parse(response.body)
 
-            expect(json_response["message"]).to eq('Your cart is empty!')
+            expect(json_response["message"]).to eq('Something went wrong!')
         end
     end
 end
