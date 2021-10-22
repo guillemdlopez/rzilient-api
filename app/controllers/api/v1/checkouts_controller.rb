@@ -1,22 +1,22 @@
-class Api::V1::CheckoutsController < ApplicationController
+class Api::V1::CheckoutsController < ApplicationController  
   def checkout
     codes = params[:ids]
 
     if codes.present?
       laptops = Laptop.find_laptops(params[:ids])
 
-      price = basic_price(laptops)
-      
-      # calculate payment methods
-      if at_least_two_lenovos?(codes)
-        price -= buy_one_get_one_free(codes, price)
-      elsif two_or_more_macbooks?(codes)
-        price -= macbook_discount(codes, price)
-      end
-
       if laptops.empty?
         render json: { message: 'Something went wrong!' }
       else
+        price = basic_price(laptops)
+      
+        # calculate payment methods
+        if at_least_two_lenovos?(codes)
+          price -= buy_one_get_one_free(laptops, price)
+        elsif two_or_more_macbooks?(codes)
+          price -= macbook_discount(laptops, price)
+        end
+        
         render json: {
           message: 'This is your bill. Come back soon!',
           cart: laptops,
@@ -39,13 +39,14 @@ class Api::V1::CheckoutsController < ApplicationController
     codes.count('AP1') >= 2
   end
 
-  def macbook_discount(codes, price)
-    macs = codes.select {|lap| lap == "AP1"}
+  def macbook_discount(laptops, price)
+    macs = laptops.select {|lap| lap.code == "AP1"}
+
     ((macs.length * 60) * 10) / 100  
   end
 
-  def buy_one_get_one_free(codes, price)
-    lns = codes.select {|lap| lap == "LN1"}
+  def buy_one_get_one_free(laptops, price)
+    lns = laptops.select {|lap| lap.code == "LN1"}
 
     (lns.length.to_f / 2).floor * 41
   end
